@@ -1,66 +1,59 @@
-// -------------------------- Elem HTML -------------------------- //
-const navbar = document.querySelector(".navbar");
-const flagContainer = document.querySelector(".flag-container");
+const nav = document.querySelector(".nav");
+const bandieraContainer = document.querySelector(".bandiera-container");
 const mottoContainer = document.querySelector(".motto-container");
 
-// ----------------------- Array squadre ------------------------ //
 let squadre = [
-  { nome: "Inter", col1: "#202120", col2: "#3F74CC", selezionata: false },
-  { nome: "Roma", col1: "#FFB200", col2: "#8F031B", selezionata: false },
-  { nome: "Juventus", col1: "#EDEDEE", col2: "#000000", selezionata: false },
-  { nome: "Milan", col1: "#FD0932", col2: "#000000", selezionata: false },
-  { nome: "Napoli", col1: "#2895D6", selezionata: false },
-  { nome: "Cagliari", col1: "#CD171A", col2: "#273583", selezionata: false },
-  {
-    nome: "Italia",
-    col1: "#209246",
-    col2: "#FFFFFF",
-    col3: "#CE2B38",
-    selezionata: false,
-  },
+  { nome: "Inter", selezionata: false, colore1: "blue", colore2: "black" },
+  { nome: "Milan", selezionata: false, colore1: "red", colore2: "black" },
+  { nome: "Roma", selezionata: false, colore1: "red", colore2: "yellow" },
+  { nome: "Napoli", selezionata: false, colore1: "turquoise" },
+  { nome: "Juventus", selezionata: false, colore1: "black", colore2: "white" },
+  { nome: "Cagliari", selezionata: false, colore1: "red", colore2: "blue" },
 ];
 
-// --------- Creazione buttons all'interno della navbar ---------- //
+// --- popolo dinamicamente la navbar di buttons --- //
 squadre.forEach((squadra, index) => {
-  const button = document.createElement("button");
-  button.className = "btn";
-  button.innerHTML = squadra.nome;
-  navbar.appendChild(button);
+  const btn = document.createElement("button");
+  btn.innerHTML = squadra.nome;
+  btn.className = "btn";
+  nav.appendChild(btn);
 
-  button.addEventListener("click", () => {
+  btn.addEventListener("click", () => {
     aggiornaBandieraMotto(index);
   });
 });
 
-// -------------- Creazione contenitore bandiera --------------- //
+// --- creazione bandiera --- //
 const bandiera = document.createElement("div");
-bandiera.className = "flag";
-flagContainer.appendChild(bandiera);
+bandiera.className = "bandiera";
+bandieraContainer.appendChild(bandiera);
 
-// --------------------- Creazione motto ---------------------- //
+// --- creazione motto --- //
 const motto = document.createElement("p");
-const mottoIncompleto = "Forza ........";
-motto.innerHTML = mottoIncompleto;
+let tifoSquadra = "Forza ...... !!!";
+motto.innerHTML = tifoSquadra;
 motto.className = "motto";
 mottoContainer.appendChild(motto);
 
-// ------------------------- Logica -------------------------- //
+// --- logica --- //
 
-const aggiornaBandieraMotto = (i) => {
+//-- arrow function -- //
+const aggiornaBandieraMotto = (id) => {
+  bandiera.innerHTML = "";
   let squadreAggiornato = [];
+
   squadreAggiornato = squadre.map((squadra, index) => {
-    if (index === i) {
+    if (index === id) {
       return { ...squadra, selezionata: !squadra.selezionata };
     } else {
       return { ...squadra, selezionata: false };
     }
   });
+
   squadre = squadreAggiornato;
 
-  // --- Devo trovare la squadra che è stata cliccata all'interno dell'array --- //
-  const squadraSelezionata = squadre.find((_squadra, index) => index === i);
+  const squadraSelezionata = squadre.find((_squadra, index) => index === id);
 
-  // --- Per avere sempre il button in stato "selezionato" --- //
   const buttons = document.querySelectorAll(".btn");
   const arrayBtns = Array.from(buttons);
   const btnSelezionato = arrayBtns.find(
@@ -68,71 +61,46 @@ const aggiornaBandieraMotto = (i) => {
   );
 
   arrayBtns.forEach((btn) => {
-    if (btn.innerHTML === btnSelezionato.innerHTML) {
-      return (btn.style.color = "rgb(206, 165, 0)");
+    if (
+      btn.innerHTML === btnSelezionato.innerHTML &&
+      squadraSelezionata.selezionata === true
+    ) {
+      return (
+        (btn.style.color = "gold"),
+        (btn.style.fontWeight = "bold"),
+        (btn.style.backgroundColor = "#0f0d83")
+      );
     } else {
-      return (btn.style.color = "rgba(0, 0, 255, 0.649)");
+      return (
+        (btn.style.color = "white"), (btn.style.backgroundColor = "#3381ff")
+      );
     }
   });
 
   if (squadraSelezionata.selezionata === true) {
-    // --- Svuoto sempre la bandiera per non sovrapporre i colori delle selezioni precedenti -- //
-    bandiera.innerHTML = "";
-
-    // --- Aggiorno il motto tramite la manipolazione di stringhe --- //
-    const mottoAggiornato = mottoIncompleto.replace(
-      "........",
+    const tifoAggiornato = tifoSquadra.replace(
+      "......",
       squadraSelezionata.nome
     );
-    motto.innerHTML = mottoAggiornato;
+    motto.innerHTML = tifoAggiornato;
 
-    // ------ Aggiorno i colori della bandiera ------ //
-    if (
-      squadraSelezionata.hasOwnProperty("col2") &&
-      !squadraSelezionata.hasOwnProperty("col3")
-    ) {
-      const colore1 = document.createElement("div");
-      colore1.className = "col1";
-      colore1.style.width = "50%";
-      colore1.style.height = "auto";
-      colore1.style.backgroundColor = squadraSelezionata.col1;
+    if (squadraSelezionata.hasOwnProperty("colore2")) {
+      const col1 = document.createElement("div");
+      col1.className = "colore";
+      col1.style.backgroundColor = squadraSelezionata.colore1;
 
-      const colore2 = document.createElement("div");
-      colore2.className = "col2";
-      colore2.style.width = "50%";
-      colore2.style.height = "auto";
-      colore2.style.backgroundColor = squadraSelezionata.col2;
+      const col2 = document.createElement("div");
+      col2.className = "colore";
+      col2.style.backgroundColor = squadraSelezionata.colore2;
 
-      bandiera.appendChild(colore1);
-      bandiera.appendChild(colore2);
-    } else if (squadraSelezionata.hasOwnProperty("col3")) {
-      const colore1 = document.createElement("div");
-      colore1.style.width = "33.33%";
-      colore1.style.height = "auto";
-      colore1.style.backgroundColor = squadraSelezionata.col1;
-
-      const colore2 = document.createElement("div");
-      colore2.style.width = "33.33%";
-      colore2.style.height = "auto";
-      colore2.style.backgroundColor = squadraSelezionata.col2;
-
-      const colore3 = document.createElement("div");
-      colore3.style.width = "33.33%";
-      colore3.style.height = "auto";
-      colore3.style.backgroundColor = squadraSelezionata.col3;
-
-      bandiera.appendChild(colore1);
-      bandiera.appendChild(colore2);
-      bandiera.appendChild(colore3);
+      bandiera.appendChild(col1);
+      bandiera.appendChild(col2);
     } else {
-      bandiera.style.backgroundColor = squadraSelezionata.col1;
+      bandiera.style.backgroundColor = squadraSelezionata.colore1;
     }
   } else {
-    // --- Riporto il motto allo stato iniziale --- //
-    motto.innerHTML = mottoIncompleto;
-
-    // ------ Svuoto la bandiera ------ //
+    motto.innerHTML = tifoSquadra;
     bandiera.innerHTML = "";
-    bandiera.style.backgroundColor = "whitesmoke";
+    bandiera.style.backgroundColor = "gray";
   }
 };
